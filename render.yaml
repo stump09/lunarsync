@@ -1,0 +1,30 @@
+# render.yaml — Blueprint deploy for Lunarsync
+services:
+  - type: web
+    name: lunarsync
+    env: node
+    plan: free              # or "starter" / "standard"
+    region: oregon          # pick a region you like
+    autoDeploy: true
+
+    # Build & start
+    buildCommand: |
+      npm ci || npm install
+      npm run build || true
+    startCommand: npm start  # Lunarsync should export an HTTP server and read process.env.PORT
+
+    # Health check (use "/" unless the app exposes another health endpoint)
+    healthCheckPath: /
+
+    # Environment variables for Node
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION       # Render respects this for Node runtime
+        value: 20
+
+    # If your app needs long-lived connections (WebSockets), Render supports them out of the box.
+    # No extra config required.
+
+# If Lunarsync lives in a subdirectory, add:
+#   rootDir: subdir-name
